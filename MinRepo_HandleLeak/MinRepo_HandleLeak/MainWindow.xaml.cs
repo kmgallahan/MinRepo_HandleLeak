@@ -58,11 +58,11 @@ namespace MinRepo_HandleLeak
 				sourcePixels2 = pixelData.DetachPixelData();
 
 				var timer1 = uiDispatcherQueue.CreateTimer();
-				timer1.Interval = TimeSpan.FromMilliseconds(1);
+				timer1.Interval = TimeSpan.FromMilliseconds(50);
 				timer1.Tick += async (_, _) => await UpdateImage1();
 
 				var timer2 = uiDispatcherQueue.CreateTimer();
-				timer2.Interval = TimeSpan.FromMilliseconds(1);
+				timer2.Interval = TimeSpan.FromMilliseconds(50);
 				timer2.Tick += async (_, _) => await UpdateImage2();
 
 				timer1.Start();
