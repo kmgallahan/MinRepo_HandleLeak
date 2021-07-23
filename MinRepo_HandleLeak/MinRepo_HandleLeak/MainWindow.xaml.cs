@@ -16,7 +16,8 @@ namespace MinRepo_HandleLeak
 		private WriteableBitmap image1Bitmap = new(200, 200);
 		private WriteableBitmap image2Bitmap = new(200, 200);
 		private readonly DispatcherQueue uiDispatcherQueue;
-		private byte[] sourcePixels;
+		private byte[] sourcePixels1;
+		private byte[] sourcePixels2;
 
 		public MainWindow()
 		{
@@ -44,14 +45,24 @@ namespace MinRepo_HandleLeak
 					ColorManagementMode.DoNotColorManage
 				);
 
-				sourcePixels = pixelData.DetachPixelData();
+				sourcePixels1 = pixelData.DetachPixelData();
+
+				pixelData = await decoder.GetPixelDataAsync(
+					BitmapPixelFormat.Bgra8,
+					BitmapAlphaMode.Straight,
+					transform,
+					ExifOrientationMode.IgnoreExifOrientation,
+					ColorManagementMode.DoNotColorManage
+				);
+
+				sourcePixels2 = pixelData.DetachPixelData();
 
 				var timer1 = uiDispatcherQueue.CreateTimer();
-				timer1.Interval = TimeSpan.FromMilliseconds(10);
+				timer1.Interval = TimeSpan.FromMilliseconds(1);
 				timer1.Tick += async (_, _) => await UpdateImage1();
 
 				var timer2 = uiDispatcherQueue.CreateTimer();
-				timer2.Interval = TimeSpan.FromMilliseconds(10);
+				timer2.Interval = TimeSpan.FromMilliseconds(1);
 				timer2.Tick += async (_, _) => await UpdateImage2();
 
 				timer1.Start();
@@ -63,7 +74,7 @@ namespace MinRepo_HandleLeak
 		{
 			using (Stream stream = image1Bitmap.PixelBuffer.AsStream())
 			{
-				await stream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
+				await stream.WriteAsync(sourcePixels1, 0, sourcePixels1.Length);
 			}
 			image1Bitmap.Invalidate();
 		}
@@ -72,7 +83,7 @@ namespace MinRepo_HandleLeak
 		{
 			using (Stream stream = image2Bitmap.PixelBuffer.AsStream())
 			{
-				await stream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
+				await stream.WriteAsync(sourcePixels2, 0, sourcePixels2.Length);
 			}
 			image2Bitmap.Invalidate();
 		}
